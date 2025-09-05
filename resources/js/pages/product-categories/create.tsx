@@ -12,10 +12,6 @@ import Paper from "@mui/material/Paper";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "Product Categories",
-    href: "/product-categories",
-  },
-  {
     title: "Create",
     href: "/product-categories/create",
   },
@@ -37,7 +33,6 @@ export default function CreateProductCategory() {
       <Grid container sx={{ p: 2 }}>
         <Grid size={{ xs: 12, md: 6 }}>
           <Box component={Paper} sx={{ flexGrow: 1, p: 2, borderRadius: 1 }}>
-            <h2>Create Product Category</h2>
             <form onSubmit={submit}>
               <TextField
                 id="name"
