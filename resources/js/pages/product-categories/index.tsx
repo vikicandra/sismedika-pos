@@ -14,12 +14,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogActions from "@mui/material/DialogActions";
-import Alert from "@mui/material/Alert";
+import ConfirmationDialog from "@/components/confirmation-dialog";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -104,43 +99,18 @@ export default function ProductCategory({
   ];
 
   const paginationModel = { page: 0, pageSize: 5 };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setSelectedId(null);
-    setError(null);
-  };
-
   return (
     <>
       <Head title="Product Category" />
 
-      <Dialog
+      <ConfirmationDialog
         open={dialogOpen}
-        onClose={handleDialogClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Are you sure you want to delete this item?"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            This action cannot be undone.
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteDisagree}>Disagree</Button>
-          <Button onClick={handleDeleteAgree} autoFocus>
-            Agree
-          </Button>
-        </DialogActions>
-      </Dialog>
+        title="Delete Confirmation"
+        message="Are you sure you want to delete this product category?"
+        error={error}
+        onAgree={handleDeleteAgree}
+        onDisagree={handleDeleteDisagree}
+      />
       <Box sx={{ flexGrow: 1, p: 2 }}>
         <Link href={"/product-categories/create"}>
           <Button
