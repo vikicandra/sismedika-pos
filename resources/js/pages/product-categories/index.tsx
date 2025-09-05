@@ -4,7 +4,7 @@ import {
   ProductCategory as ProductCategoryType,
   type BreadcrumbItem,
 } from "@/types";
-import { Head, Link, router, usePage } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -13,14 +13,13 @@ import Box from "@mui/material/Box";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
-import { useEffect, useState } from "react";
-import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
+import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
+import Alert from "@mui/material/Alert";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -28,112 +27,116 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: dashboard().url,
   },
 ];
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID" },
-  { field: "name", headerName: "Name", width: 200 },
-  { field: "created_at", headerName: "Created At", width: 300 },
-  { field: "updated_at", headerName: "Updated At", width: 300 },
-  {
-    field: "action",
-    headerName: "Actions",
-    width: 200,
-    sortable: false,
-    renderCell: (params: GridRenderCellParams<ProductCategoryType>) => (
-      <Stack direction={"row"} spacing={1}>
-        <Button
-          variant="contained"
-          color="success"
-          size="small"
-          startIcon={<EditIcon />}
-        >
-          <Link
-            href={`/product-categories/${params.row.id}/edit`}
-            style={{ textDecoration: "none" }}
-          >
-            Edit
-          </Link>
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          size="small"
-          startIcon={<DeleteIcon />}
-          onClick={() => deleteRow(params.row.id)}
-        >
-          Delete
-        </Button>
-      </Stack>
-    ),
-  },
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
-
-const deleteRow = (id: number) => {
-  router.delete("/product-categories/" + id);
-};
 
 export default function ProductCategory({
   productCategories,
 }: {
   productCategories: ProductCategoryType[];
 }) {
-  const { flash } = usePage<{ flash: { message?: string } }>().props;
-  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason,
-  ) => {
-    if (reason === "clickaway") {
-      return;
+  const handleDeleteAgree = () => {
+    if (selectedId) {
+      router.delete("/product-categories/" + selectedId, {
+        onSuccess: () => {
+          setDialogOpen(false);
+          setSelectedId(null);
+          setError(null);
+        },
+        onError: (errors) => {
+          console.log(errors);
+
+          // Ambil pesan error pertama, atau tampilkan pesan default
+          const firstError = Object.values(errors)[0];
+          setError(firstError || "An unexpected error occurred.");
+        },
+      });
     }
-
-    setOpen(false);
   };
 
-  useEffect(() => {
-    if (flash.message) {
-      setOpen(true);
-    }
-  }, [flash.message]);
+  const handleDeleteDisagree = () => {
+    setDialogOpen(false);
+    setSelectedId(null);
+    setError(null);
+  };
+
+  const deleteRow = (id: number) => {
+    setSelectedId(id);
+    setDialogOpen(true);
+  };
+
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID" },
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "created_at", headerName: "Created At", width: 300 },
+    { field: "updated_at", headerName: "Updated At", width: 300 },
+    {
+      field: "action",
+      headerName: "Actions",
+      width: 200,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams<ProductCategoryType>) => (
+        <Stack direction={"row"} spacing={1}>
+          <Button
+            variant="contained"
+            color="success"
+            size="small"
+            startIcon={<EditIcon />}
+            href={`/product-categories/${params.row.id}/edit`}
+            component={Link}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            startIcon={<DeleteIcon />}
+            onClick={() => deleteRow(params.row.id)}
+          >
+            Delete
+          </Button>
+        </Stack>
+      ),
+    },
+  ];
+
+  const paginationModel = { page: 0, pageSize: 5 };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedId(null);
+    setError(null);
+  };
+
   return (
     <>
       <Head title="Product Category" />
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          onClose={handleClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {flash.message}
-        </Alert>
-      </Snackbar>
 
       <Dialog
-        open={open}
-        // onClose={handleClose}
+        open={dialogOpen}
+        onClose={handleDialogClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
+          {"Are you sure you want to delete this item?"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            This action cannot be undone.
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleDeleteDisagree}>Disagree</Button>
+          <Button onClick={handleDeleteAgree} autoFocus>
             Agree
           </Button>
         </DialogActions>
