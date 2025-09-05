@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Http\Requests\StoreProductCategoryRequest;
+use App\Http\Requests\UpdateProductCategoryRequest;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -34,7 +35,7 @@ class ProductCategoryController extends Controller
     {
         ProductCategory::create($request->validated());
 
-        return redirect()->route('product-categories.index');
+        return to_route('product-categories.index')->with('message', 'Success');
     }
 
     public function edit(ProductCategory $productCategory)
@@ -44,13 +45,13 @@ class ProductCategoryController extends Controller
         ]);
     }
 
-    public function update(ProductCategory $productCategory, StoreProductCategoryRequest $request)
+    public function update(ProductCategory $productCategory, UpdateProductCategoryRequest $request)
     {
         $request->validated();
         $productCategory->name = $request->name;
         $productCategory->save();
 
-        return redirect()->route('product-categories.index');
+        return to_route('product-categories.index')->with('message', 'Success');
     }
 
     public function destroy(ProductCategory $productCategory)
