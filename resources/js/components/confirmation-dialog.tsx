@@ -36,9 +36,9 @@ export default function ConfirmationDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onDisagree}>Disagree</Button>
+        <Button onClick={onDisagree}>No</Button>
         <Button onClick={onAgree} autoFocus>
-          Agree
+          Yes
         </Button>
       </DialogActions>
     </Dialog>
