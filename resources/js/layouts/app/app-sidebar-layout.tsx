@@ -27,9 +27,16 @@ export default function AppSidebarLayout({
   };
 
   useEffect(() => {
+    // Jika ada flash message, tampilkan Snackbar.
+    // Jika tidak ada (misal, setelah navigasi), pastikan Snackbar tertutup.
     if (flash.message) {
       setOpen(true);
+    } else {
+      setOpen(false);
     }
+
+    // Fungsi cleanup: akan dijalankan saat komponen di-unmount.
+    return () => setOpen(false);
   }, [flash]);
 
   return (

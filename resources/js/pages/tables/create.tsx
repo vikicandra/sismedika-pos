@@ -1,9 +1,10 @@
 import AppLayout from "@/layouts/app-layout";
-import { ProductCategoryType, type BreadcrumbItem } from "@/types";
+import { type BreadcrumbItem } from "@/types";
 import { Head, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
-import ProductForm from "./from";
-import products from "@/routes/products";
+import TableForm from "./form";
+import { TableStatus } from "@/enums/table";
+import tableRoutes from "@/routes/tables";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -13,28 +14,26 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function CreateProductCategory({
-  productCategories,
+  statuses,
 }: {
-  productCategories: ProductCategoryType[];
+  statuses: TableStatus[];
 }) {
   const { data, setData, post, errors, processing } = useForm({
     name: "",
-    description: "",
-    price: 0,
-    product_category_id: "",
+    status: "",
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
-    post(products.store.url());
+    post(tableRoutes.store.url());
   };
 
   return (
     <>
-      <Head title="Create Product" />
-      <ProductForm
-        title="Create Product"
-        productCategories={productCategories}
+      <Head title="Create Table" />
+      <TableForm
+        title="Create Table"
+        statuses={statuses}
         data={data}
         errors={errors}
         processing={processing}

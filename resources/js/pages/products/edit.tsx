@@ -7,26 +7,36 @@ import products from "@/routes/products";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "Create",
+    title: "Edit",
     href: "",
   },
 ];
 
-export default function CreateProductCategory({
+interface ProductType {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  product_category_id: string;
+}
+
+export default function EditProductCategory({
   productCategories,
+  product,
 }: {
   productCategories: ProductCategoryType[];
+  product: ProductType;
 }) {
-  const { data, setData, post, errors, processing } = useForm({
-    name: "",
-    description: "",
-    price: 0,
-    product_category_id: "",
+  const { data, setData, put, errors, processing } = useForm({
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    product_category_id: product.product_category_id,
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
-    post(products.store.url());
+    put(products.update.url({ product: product.id }));
   };
 
   return (
@@ -45,6 +55,6 @@ export default function CreateProductCategory({
   );
 }
 
-CreateProductCategory.layout = (page: React.ReactNode) => (
+EditProductCategory.layout = (page: React.ReactNode) => (
   <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>
 );

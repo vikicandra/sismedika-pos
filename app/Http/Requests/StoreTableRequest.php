@@ -2,16 +2,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreProductCategoryRequest extends FormRequest
+class StoreTableRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        // Set to true to allow anyone to make this request.
-        // You can add authorization logic here later if needed.
         return true;
     }
 
@@ -23,7 +22,8 @@ class StoreProductCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:product_categories,name'],
+            'name'   => ['required', 'string', 'max:255', 'unique:tables,name'],
+            'status' => ['required', Rule::in(['available', 'occupied', 'reserved', 'inactive'])],
         ];
     }
 }
