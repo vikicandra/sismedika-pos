@@ -1,5 +1,4 @@
 import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
 import { Table, type BreadcrumbItem } from "@/types";
 import { Head, Link, router } from "@inertiajs/react";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
@@ -17,7 +16,7 @@ import Chip from "@mui/material/Chip";
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: "Table",
-    href: dashboard().url,
+    href: "/tables",
   },
 ];
 
@@ -134,6 +133,17 @@ export default function ProductCategory({ tables }: { tables: Table[] }) {
             sx={{ mb: 1 }}
           >
             Create
+          </Button>
+        </Link>
+        <Link href={"/tables/floor-plan"}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<AddIcon />}
+            sx={{ mb: 1 }}
+          >
+            Floor Plan
           </Button>
         </Link>
         <Paper sx={{ width: "100%" }}>

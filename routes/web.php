@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('product-categories', ProductCategoryController::class);
     Route::resource('products', ProductController::class);
+    Route::get('tables/floor-plan', [TableController::class, 'floorPlan'])->name('tables.floor-plan');
     Route::resource('tables', TableController::class);
 });
 

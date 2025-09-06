@@ -70,4 +70,16 @@ class TableController extends Controller
 
         return redirect()->route('tables.index')->with('message', 'Table deleted successfully.');
     }
+
+    public function floorPlan()
+    {
+        $tables              = Table::select('id', 'name', 'status')->get();
+        $countTablesByStatus = $tables->groupBy('status')->map(fn($group) => $group->count())->toArray();
+        $statuses            = array_column(TableStatus::cases(), 'value');
+        return Inertia::render('tables/floor-plan', [
+            'tables'              => $tables,
+            'statuses'            => $statuses,
+            'countTablesByStatus' => $countTablesByStatus,
+        ]);
+    }
 }
