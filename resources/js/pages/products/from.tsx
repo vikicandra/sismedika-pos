@@ -17,7 +17,7 @@ interface ProductFormProps {
   productCategories: ProductCategoryType[];
   data: {
     name: string;
-    price: string;
+    price: number;
     description: string;
     product_category_id: string;
   };

@@ -56,10 +56,19 @@ class ProductController extends Controller
     public function update(Product $product, StoreProductRequest $request)
     {
         $request->validated();
-        $product->name        = $request->name;
-        $product->description = $request->description;
-        $product->price       = $request->price;
-        $product->category_id = $request->category_id;
+        $product->name                = $request->name;
+        $product->description         = $request->description;
+        $product->price               = $request->price;
+        $product->product_category_id = $request->product_category_id;
         $product->save();
+
+        return to_route('products.index')->with('message', 'Success');
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+
+        return redirect()->route('products.index');
     }
 }
