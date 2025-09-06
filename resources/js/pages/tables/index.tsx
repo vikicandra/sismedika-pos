@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/app-layout";
 import { dashboard } from "@/routes";
-import { ProductCategoryType, type BreadcrumbItem } from "@/types";
+import { Table, type BreadcrumbItem } from "@/types";
 import { Head, Link, router } from "@inertiajs/react";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
@@ -12,26 +12,23 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
 import ConfirmationDialog from "@/components/confirmation-dialog";
+import Chip from "@mui/material/Chip";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "Product Category",
+    title: "Table",
     href: dashboard().url,
   },
 ];
 
-export default function ProductCategory({
-  productCategories,
-}: {
-  productCategories: ProductCategoryType[];
-}) {
+export default function ProductCategory({ tables }: { tables: Table[] }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleDeleteAgree = () => {
     if (selectedId) {
-      router.delete("/product-categories/" + selectedId, {
+      router.delete("/tables/" + selectedId, {
         onSuccess: () => {
           setDialogOpen(false);
           setSelectedId(null);
@@ -60,8 +57,27 @@ export default function ProductCategory({
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID" },
     { field: "name", headerName: "Name", width: 200 },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => (
+        <Chip
+          label={params.value.charAt(0).toUpperCase() + params.value.slice(1)}
+          size="small"
+          color={
+            params.value === "available"
+              ? "success"
+              : params.value === "occupied"
+                ? "info"
+                : params.value === "reserved"
+                  ? "warning"
+                  : "error"
+          }
+        />
+      ),
+    },
     { field: "created_at", headerName: "Created At", width: 300 },
     { field: "updated_at", headerName: "Updated At", width: 300 },
     {
@@ -69,14 +85,14 @@ export default function ProductCategory({
       headerName: "Actions",
       width: 200,
       sortable: false,
-      renderCell: (params: GridRenderCellParams<ProductCategoryType>) => (
+      renderCell: (params: GridRenderCellParams<Table>) => (
         <Stack direction={"row"} spacing={1}>
           <Button
             variant="contained"
             color="success"
             size="small"
             startIcon={<EditIcon />}
-            href={`/product-categories/${params.row.id}/edit`}
+            href={`/tables/${params.row.id}/edit`}
             component={Link}
           >
             Edit
@@ -98,18 +114,18 @@ export default function ProductCategory({
   const paginationModel = { page: 0, pageSize: 5 };
   return (
     <>
-      <Head title="Product Category" />
+      <Head title="Table" />
 
       <ConfirmationDialog
         open={dialogOpen}
         title="Delete Confirmation"
-        message="Are you sure you want to delete this product category?"
+        message="Are you sure you want to delete this table?"
         error={error}
         onAgree={handleDeleteAgree}
         onDisagree={handleDeleteDisagree}
       />
       <Box sx={{ flexGrow: 1, p: 2 }}>
-        <Link href={"/product-categories/create"}>
+        <Link href={"/tables/create"}>
           <Button
             variant="contained"
             color="primary"
@@ -122,7 +138,7 @@ export default function ProductCategory({
         </Link>
         <Paper sx={{ width: "100%" }}>
           <DataGrid
-            rows={productCategories}
+            rows={tables}
             columns={columns}
             initialState={{ pagination: { paginationModel } }}
             pageSizeOptions={[5, 10]}

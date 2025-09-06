@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TableController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('product-categories', ProductCategoryController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('tables', TableController::class);
 });
 
 require __DIR__ . '/settings.php';

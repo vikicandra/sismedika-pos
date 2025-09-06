@@ -54,3 +54,11 @@ export interface ProductType {
   price: string;
   category_id: number;
 }
+
+export interface Table {
+  id: number;
+  name: string;
+  status: "available" | "occupied" | "reserved" | "inactive";
+  created_at: string;
+  updated_at: string;
+}

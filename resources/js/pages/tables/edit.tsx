@@ -1,41 +1,46 @@
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, ProductCategoryType } from "@/types";
-import productCategoriesRoutes from "@/routes/product-categories";
+import { BreadcrumbItem, Table } from "@/types";
+import tablesRoutes from "@/routes/tables";
 import { Head, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
-import ProductCategoryForm from "./form";
+import TableForm from "./form";
+import { TableStatus } from "@/enums/table";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "Edit Product Categories",
+    title: "Edit Table",
     href: "",
   },
 ];
 
-export default function ProductCategoryEdit({
-  productCategory,
+export default function TableEdit({
+  table,
+  statuses,
 }: {
-  productCategory: ProductCategoryType;
+  table: Table;
+  statuses: TableStatus[];
 }) {
   const { data, setData, put, errors, processing } = useForm({
-    name: productCategory.name,
+    name: table.name,
+    status: table.status,
   });
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
     put(
-      productCategoriesRoutes.update.url({
-        product_category: productCategory.id,
+      tablesRoutes.update.url({
+        table: table.id,
       }),
     );
   };
 
   return (
     <>
-      <Head title="Edit Product Category" />
-      <ProductCategoryForm
-        title="Edit Product Category"
+      <Head title="Edit Table" />
+      <TableForm
+        title="Edit Table"
         data={data}
+        statuses={statuses}
         errors={errors}
         processing={processing}
         submit={submit}
@@ -45,6 +50,6 @@ export default function ProductCategoryEdit({
   );
 }
 
-ProductCategoryEdit.layout = (page: React.ReactNode) => (
+TableEdit.layout = (page: React.ReactNode) => (
   <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>
 );

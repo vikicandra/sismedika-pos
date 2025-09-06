@@ -144,7 +144,7 @@ export default function ProductForm({
             />
           </Grid>
         </Grid>
-        <Grid container sx={{ textAlign: "right" }}>
+        <Grid container sx={{ textAlign: "right", mt: 2 }}>
           <Grid size={{ xs: 12 }}>
             <Button
               type="submit"
