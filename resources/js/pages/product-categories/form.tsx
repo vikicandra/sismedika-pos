@@ -9,8 +9,8 @@ interface ProductCategoryFormProps {
   title: string;
   data: { name: string };
   setData: (key: string, value: string) => void;
-  processing: boolean; // Assuming this is a boolean from useForm
-  errors: { name?: string }; // More specific type for errors
+  processing: boolean;
+  errors: { name?: string };
   submit: FormEventHandler;
 }
 
