@@ -13,29 +13,39 @@ import {
 import { dashboard } from "@/routes";
 import { type NavItem } from "@/types";
 import { Link } from "@inertiajs/react";
-import { BookOpen, Folder, LayoutGrid } from "lucide-react";
+import { BookOpen, Folder } from "lucide-react";
 import AppLogo from "./app-logo";
+import CategoryIcon from "@mui/icons-material/Category";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
+import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const mainNavItems: NavItem[] = [
   {
     title: "Dashboard",
     href: dashboard(),
-    icon: LayoutGrid,
+    icon: () => <DashboardIcon fontSize="small" />,
   },
   {
     title: "Category",
     href: "/product-categories",
-    icon: LayoutGrid,
+    icon: () => <CategoryIcon fontSize="small" />,
   },
   {
     title: "Product",
     href: "/products",
-    icon: LayoutGrid,
+    icon: () => <FastfoodIcon fontSize="small" />,
   },
   {
     title: "Table",
     href: "/tables",
-    icon: LayoutGrid,
+    icon: () => <TableRestaurantIcon fontSize="small" />,
+  },
+  {
+    title: "Order",
+    href: "/orders",
+    icon: () => <BorderColorIcon fontSize="small" />,
   },
 ];
 

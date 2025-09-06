@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TableController;
@@ -19,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::get('tables/floor-plan', [TableController::class, 'floorPlan'])->name('tables.floor-plan');
     Route::resource('tables', TableController::class);
+    Route::resource('orders', OrderController::class);
+
 });
 
 require __DIR__ . '/settings.php';
