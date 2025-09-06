@@ -43,4 +43,23 @@ class ProductController extends Controller
 
         return to_route('products.index')->with('message', 'Success');
     }
+
+    public function edit(Product $product)
+    {
+        $productCategories = ProductCategory::all();
+        return Inertia::render('products/edit', [
+            'product'           => $product,
+            'productCategories' => $productCategories,
+        ]);
+    }
+
+    public function update(Product $product, StoreProductRequest $request)
+    {
+        $request->validated();
+        $product->name        = $request->name;
+        $product->description = $request->description;
+        $product->price       = $request->price;
+        $product->category_id = $request->category_id;
+        $product->save();
+    }
 }
