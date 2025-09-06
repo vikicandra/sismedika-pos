@@ -41,9 +41,16 @@ export interface User {
   [key: string]: unknown; // This allows for additional properties...
 }
 
-export interface ProductCategory {
+export interface ProductCategoryType {
   id: number;
   name: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProductType {
+  name: string;
+  description: string;
+  price: string;
+  category_id: number;
 }

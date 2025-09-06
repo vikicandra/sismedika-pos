@@ -1,7 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProductRequest;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -25,5 +27,20 @@ class ProductController extends Controller
         return Inertia::render('products/index', [
             'products' => $products,
         ]);
+    }
+
+    public function create()
+    {
+        $productCategories = ProductCategory::all();
+        return Inertia::render('products/create', [
+            'productCategories' => $productCategories,
+        ]);
+    }
+
+    public function store(StoreProductRequest $request)
+    {
+        Product::create($request->validated());
+
+        return to_route('products.index')->with('message', 'Success');
     }
 }
