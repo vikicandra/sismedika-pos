@@ -13,19 +13,18 @@ import {
 import { dashboard } from "@/routes";
 import { type NavItem } from "@/types";
 import { Link } from "@inertiajs/react";
-import { BookOpen, Folder } from "lucide-react";
+import { Folder } from "lucide-react";
 import AppLogo from "./app-logo";
 import CategoryIcon from "@mui/icons-material/Category";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const mainNavItems: NavItem[] = [
   {
-    title: "Dashboard",
-    href: dashboard(),
-    icon: () => <DashboardIcon fontSize="small" />,
+    title: "Orders",
+    href: "/orders",
+    icon: () => <ShoppingCartIcon fontSize="small" />,
   },
   {
     title: "Category",
@@ -42,23 +41,13 @@ const mainNavItems: NavItem[] = [
     href: "/tables",
     icon: () => <TableRestaurantIcon fontSize="small" />,
   },
-  {
-    title: "Orders",
-    href: "/orders",
-    icon: () => <ShoppingCartIcon fontSize="small" />,
-  },
 ];
 
 const footerNavItems: NavItem[] = [
   {
     title: "Repository",
-    href: "https://github.com/laravel/react-starter-kit",
+    href: "https://github.com/vikicandra/sismedika-pos",
     icon: Folder,
-  },
-  {
-    title: "Documentation",
-    href: "https://laravel.com/docs/starter-kits#react",
-    icon: BookOpen,
   },
 ];
 

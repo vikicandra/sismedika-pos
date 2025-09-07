@@ -1,7 +1,7 @@
 import CardStatus from "@/components/card-status";
 import { TableStatus } from "@/enums/tableStatus";
 import { Table, type SharedData } from "@/types";
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";

@@ -6,13 +6,12 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', [WelcomeController::class, 'welcome'])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return redirect()->route('orders.index');
     })->name('dashboard');
 
     Route::resource('product-categories', ProductCategoryController::class);

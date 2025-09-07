@@ -10,6 +10,7 @@ use App\Models\ProductCategory;
 use App\Models\Table;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -29,6 +30,7 @@ class OrderController extends Controller
 
     public function create()
     {
+        Gate::authorize('create', Order::class);
         $tables              = Table::select('id', 'name', 'status')->get();
         $countTablesByStatus = $tables->groupBy('status')->map(fn($group) => $group->count())->toArray();
         $statuses            = array_column(TableStatus::cases(), 'value');
@@ -41,6 +43,7 @@ class OrderController extends Controller
 
     public function cart($id)
     {
+        Gate::authorize('create', Order::class);
         $table = Table::find($id);
         if ($table->status != 'available') {
             return to_route('orders.create')->with('message', 'Table is not available');
@@ -56,8 +59,8 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request)
     {
+        Gate::authorize('create', Order::class);
         $validated = $request->validated();
-
         DB::beginTransaction();
         try {
             $table         = Table::find($validated['table_id']);
@@ -90,6 +93,7 @@ class OrderController extends Controller
 
     public function edit($id)
     {
+        Gate::authorize('update', Order::class);
         $order = Order::where('id', $id)
             ->with(['detail', 'detail.product', 'user'])
             ->first();
@@ -104,6 +108,7 @@ class OrderController extends Controller
 
     public function update(UpdateOrderRequest $request, $order)
     {
+        Gate::authorize('update', Order::class);
         $validated  = $request->validated();
         $orderModel = Order::findOrFail($order);
 
@@ -143,6 +148,7 @@ class OrderController extends Controller
 
     public function closeOrder($order)
     {
+        Gate::authorize('closeOrder', Order::class);
         DB::beginTransaction();
         try {
             $order         = Order::find($order);

@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/app-layout";
-import { Table, type BreadcrumbItem } from "@/types";
-import { Head, Link, router } from "@inertiajs/react";
+import { Table, type BreadcrumbItem, type SharedData } from "@/types";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -24,6 +24,8 @@ export default function ProductCategory({ tables }: { tables: Table[] }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { auth } = usePage<SharedData>().props;
+  console.log(auth.user);
 
   const handleDeleteAgree = () => {
     if (selectedId) {
