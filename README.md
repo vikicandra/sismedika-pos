@@ -60,12 +60,12 @@ Generate kunci aplikasi unik untuk proyek Anda dengan perintah Artisan berikut:
 php artisan key:generate
 ```
 
-### 5. Jalankan Migrasi Database
+### 5. Jalankan Migrasi Database dan Seeder
 
 Jalankan migrasi untuk membuat skema database yang diperlukan:
 
 ```bash
-php artisan migrate
+php artisan migrate --seed
 ```
 
 ### 6. Instal Dependensi Frontend
