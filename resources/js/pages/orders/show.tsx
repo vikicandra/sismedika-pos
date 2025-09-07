@@ -1,9 +1,12 @@
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem, OrderEdit } from "@/types";
+import { Link } from "@inertiajs/react";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import DoneIcon from "@mui/icons-material/Done";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -91,6 +94,18 @@ export default function ShowOrder({
               </Grid>
             </Box>
           </Paper>
+        </Grid>
+
+        <Grid size={12} sx={{ textAlign: "right" }}>
+          <Button
+            component={Link}
+            color="warning"
+            variant="contained"
+            href={"/orders/close-order/" + order.id}
+            startIcon={<DoneIcon />}
+          >
+            Close Order
+          </Button>
         </Grid>
       </Grid>
     </Box>

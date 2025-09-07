@@ -78,6 +78,7 @@ class OrderController extends Controller
                 'quantity'   => $p['quantity'],
                 'sub_total'  => $p['price'] * $p['quantity'],
             ])->toArray());
+
             DB::commit();
             return to_route('orders.index')->with('message', 'Success');
         } catch (\Throwable $th) {
@@ -138,5 +139,24 @@ class OrderController extends Controller
             'order' => $order,
             'now'   => $now,
         ]);
+    }
+
+    public function closeOrder($order)
+    {
+        DB::beginTransaction();
+        try {
+            $order         = Order::find($order);
+            $order->status = 'closed';
+            $order->save();
+
+            $order->table()->update(['status' => 'available']);
+
+            DB::commit();
+            return to_route('orders.index')->with('message', 'Order closed successfully');
+        } catch (\Throwable $th) {
+            Log::error($th);
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error closing order');
+        }
     }
 }
