@@ -3,10 +3,13 @@ namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
 use App\Enums\TableStatus;
+use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\Table;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -14,6 +17,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::with(['table', 'detail', 'detail.product', 'user'])
+            ->orderBy('created_at', 'desc')
             ->get();
         $statuses = array_column(OrderStatus::cases(), 'value');
         return Inertia::render('orders/index', [
@@ -47,5 +51,41 @@ class OrderController extends Controller
             'categories' => $categories,
             'now'        => $now,
         ]);
+    }
+
+    public function store(StoreOrderRequest $request)
+    {
+
+        $validated = $request->validated();
+        // dd($validated->table_id);
+
+        DB::beginTransaction();
+        try {
+            $table         = Table::find($validated['table_id']);
+            $table->status = 'occupied';
+            $table->save();
+
+            $order = Order::create([
+                'table_id'      => $validated['table_id'],
+                'user_id'       => auth()->user()->id,
+                'total_price'   => $validated['total_price'],
+                'customer_name' => $validated['customer_name'],
+                'status'        => 'open',
+            ]);
+
+            $order->detail()->createMany(collect($request->items)->map(fn($p) => [
+                'product_id' => $p['id'],
+                'price'      => $p['price'],
+                'quantity'   => $p['quantity'],
+                'sub_total'  => $p['price'] * $p['quantity'],
+            ])->toArray());
+            DB::commit();
+            return to_route('orders.index')->with('message', 'Success');
+        } catch (\Throwable $th) {
+            Log::error($th);
+            DB::rollback();
+            return redirect()->back()->with('error', 'Error');
+        }
+
     }
 }
