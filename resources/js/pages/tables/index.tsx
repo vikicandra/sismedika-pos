@@ -135,7 +135,7 @@ export default function ProductCategory({ tables }: { tables: Table[] }) {
             Create
           </Button>
         </Link>
-        <Link href={"/tables/floor-plan"}>
+        {/* <Link href={"/tables/floor-plan"}>
           <Button
             variant="contained"
             color="primary"
@@ -145,7 +145,7 @@ export default function ProductCategory({ tables }: { tables: Table[] }) {
           >
             Floor Plan
           </Button>
-        </Link>
+        </Link> */}
         <Paper sx={{ width: "100%" }}>
           <DataGrid
             rows={tables}

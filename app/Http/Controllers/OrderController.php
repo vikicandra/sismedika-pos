@@ -127,4 +127,16 @@ class OrderController extends Controller
             return redirect()->back()->with('error', 'Error updating order');
         }
     }
+
+    public function show($order)
+    {
+        $order = Order::where('id', $order)
+            ->with(['detail', 'detail.product', 'user'])
+            ->first();
+        $now = $order->created_at->format('F j, Y H:i');
+        return Inertia::render('orders/show', [
+            'order' => $order,
+            'now'   => $now,
+        ]);
+    }
 }
