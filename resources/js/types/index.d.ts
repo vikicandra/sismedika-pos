@@ -20,7 +20,7 @@ export interface NavGroup {
 export interface NavItem {
   title: string;
   href: NonNullable<InertiaLinkProps["href"]>;
-  icon?: ComponentType<any> | LucideIcon | null;
+  icon?: ComponentType<> | LucideIcon | null;
   isActive?: boolean;
 }
 
@@ -48,6 +48,19 @@ export interface ProductCategoryType {
   name: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProductCategoryCart {
+  id: number;
+  name: string;
+  products: [
+    {
+      id: number;
+      name: string;
+      description: string;
+      price: number;
+    },
+  ];
 }
 
 export interface ProductType {

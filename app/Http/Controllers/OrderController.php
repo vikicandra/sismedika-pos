@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Enums\OrderStatus;
 use App\Enums\TableStatus;
 use App\Models\Order;
+use App\Models\ProductCategory;
 use App\Models\Table;
+use Carbon\Carbon;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -29,6 +31,17 @@ class OrderController extends Controller
             'tables'              => $tables,
             'statuses'            => $statuses,
             'countTablesByStatus' => $countTablesByStatus,
+        ]);
+    }
+
+    public function cart($id)
+    {
+        $categories = ProductCategory::with('products')->get();
+        $now        = Carbon::now()->format('F j, Y');
+        return Inertia::render('orders/cart', [
+            'table_id'   => $id,
+            'categories' => $categories,
+            'now'        => $now,
         ]);
     }
 }

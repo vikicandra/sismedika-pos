@@ -18,8 +18,8 @@ import AppLogo from "./app-logo";
 import CategoryIcon from "@mui/icons-material/Category";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
-import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const mainNavItems: NavItem[] = [
   {
@@ -43,9 +43,9 @@ const mainNavItems: NavItem[] = [
     icon: () => <TableRestaurantIcon fontSize="small" />,
   },
   {
-    title: "Order",
+    title: "Orders",
     href: "/orders",
-    icon: () => <BorderColorIcon fontSize="small" />,
+    icon: () => <ShoppingCartIcon fontSize="small" />,
   },
 ];
 

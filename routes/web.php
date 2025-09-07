@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::get('tables/floor-plan', [TableController::class, 'floorPlan'])->name('tables.floor-plan');
     Route::resource('tables', TableController::class);
+    Route::get('orders/cart/{table_id}', [OrderController::class, 'cart']);
     Route::resource('orders', OrderController::class);
 
 });

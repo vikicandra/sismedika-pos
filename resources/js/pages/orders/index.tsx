@@ -44,7 +44,7 @@ export default function OrderIndex({
             variant="contained"
             startIcon={<AddIcon />}
           >
-            Add Order
+            New Order
           </Button>
         </Grid>
         <Grid size={{ md: 6 }}></Grid>
@@ -70,9 +70,12 @@ export default function OrderIndex({
                       />
                     </Grid>
                   </Grid>
-                  {"Table " + order.table.name}
-                  <br />
-                  {order.customer_name}
+                  <Typography sx={{ color: "text.secondary" }}>
+                    {"Table " + order.table.name}
+                  </Typography>
+                  <Typography sx={{ color: "text.secondary" }}>
+                    {order.customer_name}
+                  </Typography>
                   <Typography
                     variant="h6"
                     sx={{ textAlign: "right" }}

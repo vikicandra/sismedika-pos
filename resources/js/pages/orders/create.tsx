@@ -7,10 +7,11 @@ import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
 import CardStatus from "@/components/card-status";
+import { Link } from "@inertiajs/react";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "Orders",
+    title: "New Orders",
     href: "/orders",
   },
 ];
@@ -41,22 +42,24 @@ export default function OrderCreate({
             <Grid container spacing={2}>
               {tables.map((table) => (
                 <Grid size={{ md: 2 }}>
-                  <Box
-                    sx={{
-                      mb: 2,
-                      bgcolor: statusColors[table.status],
-                      color: "primary.contrastText",
-                      p: 4,
-                      cursor: "pointer",
-                      borderRadius: 5,
-                      textAlign: "center",
-                      "&:hover": {
-                        opacity: 0.8,
-                      },
-                    }}
-                  >
-                    <Typography variant="h6">{table.name}</Typography>
-                  </Box>
+                  <Link href={"/orders/cart/" + table.id}>
+                    <Box
+                      sx={{
+                        mb: 2,
+                        bgcolor: statusColors[table.status],
+                        color: "primary.contrastText",
+                        p: 4,
+                        cursor: "pointer",
+                        borderRadius: 5,
+                        textAlign: "center",
+                        "&:hover": {
+                          opacity: 0.8,
+                        },
+                      }}
+                    >
+                      <Typography variant="h6">{table.name}</Typography>
+                    </Box>
+                  </Link>
                 </Grid>
               ))}
             </Grid>
