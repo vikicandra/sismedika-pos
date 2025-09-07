@@ -11,6 +11,7 @@ import { Link } from "@inertiajs/react";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import CardStatus from "@/components/card-status";
+import CardActions from "@mui/material/CardActions";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -52,40 +53,60 @@ export default function OrderIndex({
       <Grid container spacing={2} sx={{ mt: 2 }}>
         {orders.map((order) => (
           <Grid size={{ md: 3 }} key={order.id}>
-            <Link href={"orders/" + order.id}>
-              <Card key={order.id}>
-                <CardContent>
-                  <Grid container>
-                    <Grid size={{ md: 6 }}>
-                      <Typography variant="h6" gutterBottom>
-                        {"ORD" + order.id}
-                      </Typography>
-                    </Grid>
-                    <Grid size={{ md: 6 }} sx={{ textAlign: "right" }}>
-                      <Chip
-                        label={order.status.toUpperCase()}
-                        size="small"
-                        color={statusColors[order.status]}
-                        sx={{ px: 2, mb: 2 }}
-                      />
-                    </Grid>
+            <Card key={order.id}>
+              <CardContent>
+                <Grid container>
+                  <Grid size={{ md: 6 }}>
+                    <Typography variant="h6" gutterBottom>
+                      {"ORD" + order.id}
+                    </Typography>
                   </Grid>
-                  <Typography sx={{ color: "text.secondary" }}>
-                    {"Table " + order.table.name}
-                  </Typography>
-                  <Typography sx={{ color: "text.secondary" }}>
-                    {order.customer_name}
-                  </Typography>
-                  <Typography
-                    variant="h6"
-                    sx={{ textAlign: "right" }}
-                    gutterBottom
+                  <Grid size={{ md: 6 }} sx={{ textAlign: "right" }}>
+                    <Chip
+                      label={order.status.toUpperCase()}
+                      size="small"
+                      color={statusColors[order.status]}
+                      sx={{ px: 2, mb: 2 }}
+                    />
+                  </Grid>
+                </Grid>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {"Table " + order.table.name}
+                </Typography>
+                <Typography sx={{ color: "text.secondary" }}>
+                  {order.customer_name}
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{ textAlign: "right" }}
+                  gutterBottom
+                >
+                  {"Rp. " + new Intl.NumberFormat().format(order.total_price)}
+                </Typography>
+              </CardContent>
+              <CardActions sx={{ justifyContent: "space-between" }}>
+                <Button
+                  size="small"
+                  component={Link}
+                  href={"/orders/" + order.id}
+                  variant="contained"
+                  color="info"
+                >
+                  View
+                </Button>
+                {order.status === "open" && (
+                  <Button
+                    size="small"
+                    component={Link}
+                    href={"/orders/" + order.id + "/edit"}
+                    color="success"
+                    variant="outlined"
                   >
-                    {"Rp. " + new Intl.NumberFormat().format(order.total_price)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Link>
+                    Edit
+                  </Button>
+                )}
+              </CardActions>
+            </Card>
           </Grid>
         ))}
       </Grid>

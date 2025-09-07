@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Enums\OrderStatus;
 use App\Enums\TableStatus;
 use App\Http\Requests\StoreOrderRequest;
+use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\Table;
@@ -55,9 +56,7 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request)
     {
-
         $validated = $request->validated();
-        // dd($validated->table_id);
 
         DB::beginTransaction();
         try {
@@ -86,6 +85,46 @@ class OrderController extends Controller
             DB::rollback();
             return redirect()->back()->with('error', 'Error');
         }
+    }
 
+    public function edit($id)
+    {
+        $order = Order::where('id', $id)
+            ->with(['detail', 'detail.product', 'user'])
+            ->first();
+        $categories = ProductCategory::with('products')->get();
+        $now        = $order->created_at->format('F j, Y');
+        return Inertia::render('orders/edit', [
+            'order'      => $order,
+            'categories' => $categories,
+            'now'        => $now,
+        ]);
+    }
+
+    public function update(UpdateOrderRequest $request, $order)
+    {
+        $validated  = $request->validated();
+        $orderModel = Order::findOrFail($order);
+
+        DB::beginTransaction();
+        try {
+            $orderModel->update([
+                'customer_name' => $validated['customer_name'],
+                'total_price'   => $validated['total_price'],
+            ]);
+
+            // Hapus detail pesanan lama
+            $orderModel->detail()->delete();
+
+            // Buat detail pesanan baru dari data yang divalidasi
+            $orderModel->detail()->createMany($validated['detail']);
+
+            DB::commit();
+            return to_route('orders.index')->with('message', 'Order updated successfully');
+        } catch (\Throwable $th) {
+            Log::error($th);
+            DB::rollback();
+            return redirect()->back()->with('error', 'Error updating order');
+        }
     }
 }

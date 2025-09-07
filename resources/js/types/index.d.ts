@@ -91,3 +91,31 @@ export interface Order {
   total_price: number;
   status: OrderStatus;
 }
+
+export interface OrderEdit {
+  id: number;
+  name: string;
+  table_id: number;
+  table: {
+    name: string;
+  };
+  user: {
+    name: string;
+  };
+  customer_name: string;
+  total_price: number;
+  status: OrderStatus;
+  detail: ItemEdit[];
+}
+
+export interface ItemEdit {
+  id: number;
+  product_id: number;
+  product: {
+    id: number;
+    name: string;
+  };
+  price: number;
+  quantity: number;
+  sub_total: number;
+}

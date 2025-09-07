@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, ProductCategoryCart } from "@/types";
+import { BreadcrumbItem, OrderEdit, ProductCategoryCart } from "@/types";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -7,7 +7,7 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { FormEventHandler, SyntheticEvent, useEffect, useState } from "react";
+import { FormEventHandler, SyntheticEvent, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -15,12 +15,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Chip from "@mui/material/Chip";
 import { useForm } from "@inertiajs/react";
 import Button from "@mui/material/Button";
-import SendIcon from "@mui/icons-material/Send";
+import EditIcon from "@mui/icons-material/Edit";
 import ordersRoutes from "@/routes/orders";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "New Order",
+    title: "Edit Order",
     href: "",
   },
 ];
@@ -54,36 +54,20 @@ function a11yProps(index: number) {
   };
 }
 
-interface Item {
-  id: number;
-  name: string;
-  price: number;
-  //   quantity: number;
-  //   sub_total: number;
-}
-
 export default function Cart({
-  table_id,
   categories,
   now,
+  order,
 }: {
-  table_id: number;
   categories: ProductCategoryCart[];
   now: string;
+  order: OrderEdit;
 }) {
-  const { data, setData, post, errors, processing } = useForm({
-    table_id,
-    total_price: 0,
-    customer_name: "",
-    items: [
-      {
-        id: 0,
-        name: "",
-        quantity: 0,
-        price: 0,
-        sub_total: 0,
-      },
-    ],
+  const { data, setData, put, errors, processing } = useForm({
+    order_id: order.id,
+    total_price: order.total_price,
+    customer_name: order.customer_name,
+    detail: order.detail,
   });
 
   const [value, setValue] = useState(0);
@@ -97,14 +81,14 @@ export default function Cart({
     setSearchQuery(event.target.value);
   };
 
-  const addToOrder = (item: Item) => {
-    const existingItem = data.items.find(
-      (orderItem) => orderItem.id === item.id,
+  const addToOrder = (item: { id: number; name: string; price: number }) => {
+    const existingItem = data.detail.find(
+      (orderItem) => orderItem.product.id === item.id,
     );
     let newItems;
     if (existingItem) {
-      newItems = data.items.map((orderItem) =>
-        orderItem.id === item.id
+      newItems = data.detail.map((orderItem) =>
+        orderItem.product.id === item.id
           ? {
               ...orderItem,
               quantity: orderItem.quantity + 1,
@@ -114,10 +98,11 @@ export default function Cart({
       );
     } else {
       newItems = [
-        ...data.items,
+        ...data.detail,
         {
           id: item.id,
-          name: item.name,
+          product_id: item.id,
+          product: { id: item.id, name: item.name },
           price: item.price,
           sub_total: item.price,
           quantity: 1,
@@ -128,7 +113,7 @@ export default function Cart({
   };
 
   const updateQuantity = (id: number, change: number) => {
-    const newItems = data.items
+    const newItems = data.detail
       .map((item) => {
         if (item.id === id) {
           const newQuantity = item.quantity + change;
@@ -145,40 +130,35 @@ export default function Cart({
   };
 
   const removeItem = (id: number) => {
-    const newItems = data.items.filter((item) => item.id !== id);
+    const newItems = data.detail.filter((item) => item.id !== id);
     updateOrderState(newItems);
   };
 
-  const updateOrderState = (newItems: typeof data.items) => {
+  const updateOrderState = (newItems: typeof data.detail) => {
     const totalPrice = newItems.reduce(
       (sum: number, item: { price: number; quantity: number }) =>
         sum + item.price * item.quantity,
       0,
     );
-    setData({ ...data, items: newItems, total_price: totalPrice });
+    setData({ ...data, detail: newItems, total_price: totalPrice });
   };
-
+  //   const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   // Filter products based on the search query
   const filteredProducts = (products: ProductCategoryCart["products"]) =>
     products.filter((product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
-  useEffect(() => {
-    // remove item with id = 0
-    const updatedItems = data.items.filter((item) => item.id !== 0);
-    setData({ ...data, items: updatedItems });
-  }, []);
-
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
-    post(ordersRoutes.store.url());
+    put(ordersRoutes.update.url({ order: order.id }));
   };
   return (
     <Box sx={{ flexGrow: 1, px: 2, mt: 2 }}>
       <Paper sx={{ p: 2 }}>
         <Typography variant="h6">
-          Table {table_id} <Chip label={breadcrumbs[0].title} size="small" />
+          Table {order.table_id}{" "}
+          <Chip label={breadcrumbs[0].title} size="small" />
         </Typography>
       </Paper>
 
@@ -263,16 +243,18 @@ export default function Cart({
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6">Order Summary</Typography>
               <Typography variant="body2">
-                {"Table " + table_id + " • " + now}
+                {"Table " + order.table_id + " • " + now}
               </Typography>
 
               <Box sx={{ mt: 2 }}>
-                {data.items.map(
+                {data.detail.map(
                   (item) =>
                     item.id !== 0 && (
                       <Grid container key={item.id} sx={{ mt: 2 }}>
                         <Grid size={{ md: 8, xs: 12 }}>
-                          <Typography variant="body1">{item.name}</Typography>
+                          <Typography variant="body1">
+                            {item.product.name}
+                          </Typography>
 
                           <Box
                             sx={{
@@ -363,14 +345,14 @@ export default function Cart({
 
               <Box sx={{ mt: 2 }}>
                 <Button
-                  startIcon={<SendIcon />}
-                  color="primary"
+                  startIcon={<EditIcon />}
+                  color="success"
                   variant="contained"
                   fullWidth
                   type="submit"
                   disabled={processing}
                 >
-                  Send to Kitchen
+                  Update Order
                 </Button>
                 {errors.total_price && (
                   <Typography variant="body2" color="error" sx={{ mt: 1 }}>

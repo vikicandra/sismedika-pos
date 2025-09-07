@@ -41,7 +41,7 @@ export default function OrderCreate({
           <Paper sx={{ p: 2 }}>
             <Grid container spacing={2}>
               {tables.map((table) => (
-                <Grid size={{ md: 2 }}>
+                <Grid size={{ md: 2 }} key={table.id}>
                   <Link href={"/orders/cart/" + table.id}>
                     <Box
                       sx={{
