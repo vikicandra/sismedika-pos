@@ -94,3 +94,20 @@ Buka dua terminal terpisah:
     ```
 
 Setelah kedua server berjalan, Anda dapat mengakses aplikasi di `http://localhost:8000` (atau alamat yang ditampilkan oleh `php artisan serve`).
+
+### 8. Akses User
+
+Akses user terbagi menjadi 2 yaitu Kasir dan Pelayan.
+
+Link Login :
+http://localhost:8000/login
+
+```bash
+Kasir
+email : cashier@cashier.com
+password : 12345678
+
+Pelayan
+email : waiter@waiter.com
+password : 1234567
+```
