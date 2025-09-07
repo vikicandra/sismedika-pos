@@ -1,0 +1,168 @@
+import AppLayout from "@/layouts/app-layout";
+import { Table, type BreadcrumbItem, type SharedData } from "@/types";
+import { Head, Link, router, usePage } from "@inertiajs/react";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import EditIcon from "@mui/icons-material/Edit";
+import Box from "@mui/material/Box";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Stack from "@mui/material/Stack";
+import { useState } from "react";
+import ConfirmationDialog from "@/components/confirmation-dialog";
+import Chip from "@mui/material/Chip";
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: "Table",
+    href: "/tables",
+  },
+];
+
+export default function ProductCategory({ tables }: { tables: Table[] }) {
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { auth } = usePage<SharedData>().props;
+  console.log(auth.user);
+
+  const handleDeleteAgree = () => {
+    if (selectedId) {
+      router.delete("/tables/" + selectedId, {
+        onSuccess: () => {
+          setDialogOpen(false);
+          setSelectedId(null);
+          setError(null);
+        },
+        onError: (errors) => {
+          console.log(errors);
+
+          // Ambil pesan error pertama, atau tampilkan pesan default
+          const firstError = Object.values(errors)[0];
+          setError(firstError || "An unexpected error occurred.");
+        },
+      });
+    }
+  };
+
+  const handleDeleteDisagree = () => {
+    setDialogOpen(false);
+    setSelectedId(null);
+    setError(null);
+  };
+
+  const deleteRow = (id: number) => {
+    setSelectedId(id);
+    setDialogOpen(true);
+  };
+
+  const columns: GridColDef[] = [
+    { field: "name", headerName: "Name", width: 200 },
+    {
+      field: "status",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => (
+        <Chip
+          label={params.value.charAt(0).toUpperCase() + params.value.slice(1)}
+          size="small"
+          color={
+            params.value === "available"
+              ? "success"
+              : params.value === "occupied"
+                ? "info"
+                : params.value === "reserved"
+                  ? "warning"
+                  : "error"
+          }
+        />
+      ),
+    },
+    { field: "created_at", headerName: "Created At", width: 300 },
+    { field: "updated_at", headerName: "Updated At", width: 300 },
+    {
+      field: "action",
+      headerName: "Actions",
+      width: 200,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams<Table>) => (
+        <Stack direction={"row"} spacing={1}>
+          <Button
+            variant="contained"
+            color="success"
+            size="small"
+            startIcon={<EditIcon />}
+            href={`/tables/${params.row.id}/edit`}
+            component={Link}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            startIcon={<DeleteIcon />}
+            onClick={() => deleteRow(params.row.id)}
+          >
+            Delete
+          </Button>
+        </Stack>
+      ),
+    },
+  ];
+
+  const paginationModel = { page: 0, pageSize: 5 };
+  return (
+    <>
+      <Head title="Table" />
+
+      <ConfirmationDialog
+        open={dialogOpen}
+        title="Delete Confirmation"
+        message="Are you sure you want to delete this table?"
+        error={error}
+        onAgree={handleDeleteAgree}
+        onDisagree={handleDeleteDisagree}
+      />
+      <Box sx={{ flexGrow: 1, p: 2 }}>
+        <Link href={"/tables/create"}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<AddIcon />}
+            sx={{ mb: 1 }}
+          >
+            Create
+          </Button>
+        </Link>
+        {/* <Link href={"/tables/floor-plan"}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            startIcon={<AddIcon />}
+            sx={{ mb: 1 }}
+          >
+            Floor Plan
+          </Button>
+        </Link> */}
+        <Paper sx={{ width: "100%" }}>
+          <DataGrid
+            rows={tables}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[5, 10]}
+            disableRowSelectionOnClick
+            sx={{ border: 0 }}
+          />
+        </Paper>
+      </Box>
+    </>
+  );
+}
+
+ProductCategory.layout = (page: React.ReactNode) => (
+  <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>
+);

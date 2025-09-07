@@ -1,42 +1,121 @@
-import { InertiaLinkProps } from '@inertiajs/react';
-import { LucideIcon } from 'lucide-react';
+import { OrderStatus } from "@/enums/orderStatus";
+import { InertiaLinkProps } from "@inertiajs/react";
+import { LucideIcon } from "lucide-react";
+import { ComponentType } from "react";
 
 export interface Auth {
-    user: User;
+  user: User;
 }
 
 export interface BreadcrumbItem {
-    title: string;
-    href: string;
+  title: string;
+  href: string;
 }
 
 export interface NavGroup {
-    title: string;
-    items: NavItem[];
+  title: string;
+  items: NavItem[];
 }
 
 export interface NavItem {
-    title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
-    icon?: LucideIcon | null;
-    isActive?: boolean;
+  title: string;
+  href: NonNullable<InertiaLinkProps["href"]>;
+  icon?: ComponentType<> | LucideIcon | null;
+  isActive?: boolean;
 }
 
 export interface SharedData {
-    name: string;
-    quote: { message: string; author: string };
-    auth: Auth;
-    sidebarOpen: boolean;
-    [key: string]: unknown;
+  name: string;
+  quote: { message: string; author: string };
+  auth: Auth;
+  sidebarOpen: boolean;
+  [key: string]: unknown;
 }
 
 export interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar?: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface ProductCategoryType {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductCategoryCart {
+  id: number;
+  name: string;
+  products: [
+    {
+      id: number;
+      name: string;
+      description: string;
+      price: number;
+    },
+  ];
+}
+
+export interface ProductType {
+  name: string;
+  description: string;
+  price: string;
+  category_id: number;
+}
+
+export interface Table {
+  id: number;
+  name: string;
+  status: "available" | "occupied" | "reserved" | "inactive";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Order {
+  id: number;
+  name: string;
+  table: {
+    name: string;
+  };
+  user: {
+    name: string;
+  };
+  customer_name: string;
+  total_price: number;
+  status: OrderStatus;
+}
+
+export interface OrderEdit {
+  id: number;
+  name: string;
+  table_id: number;
+  table: {
+    name: string;
+  };
+  user: {
+    name: string;
+  };
+  customer_name: string;
+  total_price: number;
+  status: OrderStatus;
+  detail: ItemEdit[];
+}
+
+export interface ItemEdit {
+  id: number;
+  product_id: number;
+  product: {
     id: number;
     name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+  };
+  price: number;
+  quantity: number;
+  sub_total: number;
 }
