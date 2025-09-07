@@ -1,4 +1,4 @@
-# Sismedika POS
+# Restaurant POS
 
 Aplikasi Point of Sale (POS) Restauran dibangun menggunakan Laravel, Inertia, dan React. Material-ui digunakan dalam desain aplikasi.
 
