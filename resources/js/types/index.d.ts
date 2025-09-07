@@ -1,3 +1,4 @@
+import { OrderStatus } from "@/enums/orderStatus";
 import { InertiaLinkProps } from "@inertiajs/react";
 import { LucideIcon } from "lucide-react";
 import { ComponentType } from "react";
@@ -62,4 +63,18 @@ export interface Table {
   status: "available" | "occupied" | "reserved" | "inactive";
   created_at: string;
   updated_at: string;
+}
+
+export interface Order {
+  id: number;
+  name: string;
+  table: {
+    name: string;
+  };
+  user: {
+    name: string;
+  };
+  customer_name: string;
+  total_price: number;
+  status: OrderStatus;
 }

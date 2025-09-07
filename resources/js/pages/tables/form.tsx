@@ -9,7 +9,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormHelperText from "@mui/material/FormHelperText";
-import { TableStatus } from "@/enums/table";
+import { TableStatus } from "@/enums/tableStatus";
 
 interface TableFormProps {
   title: string;

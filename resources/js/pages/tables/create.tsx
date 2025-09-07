@@ -3,7 +3,7 @@ import { type BreadcrumbItem } from "@/types";
 import { Head, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
 import TableForm from "./form";
-import { TableStatus } from "@/enums/table";
+import { TableStatus } from "@/enums/tableStatus";
 import tableRoutes from "@/routes/tables";
 
 const breadcrumbs: BreadcrumbItem[] = [

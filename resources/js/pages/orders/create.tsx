@@ -11,8 +11,8 @@ import Chip from "@mui/material/Chip";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: "Table",
-    href: "/tables/floor-plan",
+    title: "Orders",
+    href: "/orders",
   },
 ];
 
@@ -23,7 +23,7 @@ const statusColors: Record<TableStatus, string> = {
   inactive: "error.main",
 };
 
-export default function FloorPlan({
+export default function OrderCreate({
   tables,
   statuses,
   countTablesByStatus,
@@ -72,7 +72,7 @@ export default function FloorPlan({
                       color: "primary.contrastText",
                       p: 4,
                       cursor: "pointer",
-                      borderRadius: 1,
+                      borderRadius: 5,
                       textAlign: "center",
                       "&:hover": {
                         opacity: 0.8,
@@ -122,6 +122,6 @@ export default function FloorPlan({
   );
 }
 
-FloorPlan.layout = (page: React.ReactNode) => (
+OrderCreate.layout = (page: React.ReactNode) => (
   <AppLayout breadcrumbs={breadcrumbs}>{page}</AppLayout>
 );

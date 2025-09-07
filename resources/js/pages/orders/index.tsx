@@ -1,6 +1,6 @@
-import { TableStatus } from "@/enums/table";
+import { OrderStatus } from "@/enums/orderStatus";
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Table } from "@/types";
+import { BreadcrumbItem, Order } from "@/types";
 import Paper from "@mui/material/Paper";
 import SquareIcon from "@mui/icons-material/Square";
 import Box from "@mui/material/Box";
@@ -8,6 +8,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import { Link } from "@inertiajs/react";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -16,41 +21,30 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const statusColors: Record<TableStatus, string> = {
-  available: "success.main",
-  occupied: "info.main",
-  reserved: "warning.main",
-  inactive: "error.main",
+const statusColors: Record<OrderStatus, "success" | "warning" | "error"> = {
+  open: "success",
+  closed: "warning",
+  cancelled: "error",
 };
 
 export default function OrderIndex({
-  tables,
+  orders,
   statuses,
-  countTablesByStatus,
 }: {
-  tables: Table[];
-  statuses: TableStatus[];
-  countTablesByStatus: Record<string, number>;
+  orders: Order[];
+  statuses: OrderStatus[];
 }) {
   return (
     <Box sx={{ flexGrow: 1, px: 2, mt: 2 }}>
       <Paper sx={{ p: 2 }}>
         <Typography variant="h6" gutterBottom>
-          Table Status
+          Order Status
         </Typography>
         <Stack direction="row" spacing={3}>
           {statuses.map((status) => (
             <Box key={status} sx={{ mb: 2 }}>
               <SquareIcon
-                color={
-                  status === "available"
-                    ? "success"
-                    : status === "occupied"
-                      ? "info"
-                      : status === "reserved"
-                        ? "warning"
-                        : "error"
-                }
+                color={statusColors[status]}
                 sx={{ verticalAlign: "middle", mr: 1 }}
               />
               {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
@@ -59,64 +53,57 @@ export default function OrderIndex({
         </Stack>
       </Paper>
 
-      <Grid container sx={{ mt: 2 }} spacing={2}>
-        <Grid size={{ md: 8, xs: 12 }}>
-          <Paper sx={{ p: 2 }}>
-            <Grid container spacing={2}>
-              {tables.map((table) => (
-                <Grid size={{ md: 2 }}>
-                  <Box
-                    sx={{
-                      mb: 2,
-                      bgcolor: statusColors[table.status],
-                      color: "primary.contrastText",
-                      p: 4,
-                      cursor: "pointer",
-                      borderRadius: 1,
-                      textAlign: "center",
-                      "&:hover": {
-                        opacity: 0.8,
-                      },
-                    }}
+      <Grid container sx={{ mt: 3 }}>
+        <Grid size={{ md: 6 }}>
+          <Button
+            component={Link}
+            href="/orders/create"
+            color="primary"
+            variant="contained"
+            startIcon={<AddIcon />}
+          >
+            Add Order
+          </Button>
+        </Grid>
+        <Grid size={{ md: 6 }}></Grid>
+      </Grid>
+
+      <Grid container spacing={2} sx={{ mt: 2 }}>
+        {orders.map((order) => (
+          <Grid size={{ md: 3 }} key={order.id}>
+            <Link href={"orders/" + order.id}>
+              <Card key={order.id}>
+                <CardContent>
+                  <Grid container>
+                    <Grid size={{ md: 6 }}>
+                      <Typography variant="h6" gutterBottom>
+                        {"ORD" + order.id}
+                      </Typography>
+                    </Grid>
+                    <Grid size={{ md: 6 }} sx={{ textAlign: "right" }}>
+                      <Chip
+                        label={order.status.toUpperCase()}
+                        size="small"
+                        color={statusColors[order.status]}
+                        sx={{ px: 2, mb: 2 }}
+                      />
+                    </Grid>
+                  </Grid>
+                  {"Table " + order.table.name}
+                  <br />
+                  {order.customer_name}
+                  <Typography
+                    variant="h6"
+                    sx={{ textAlign: "right" }}
+                    gutterBottom
                   >
-                    <Typography variant="h6">{table.name}</Typography>
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          </Paper>
-        </Grid>
-
-        <Grid size={{ md: 4, xs: 12 }}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Quick Stats
-            </Typography>
-
-            {Object.entries(countTablesByStatus).map(([key, value]) => (
-              <Box
-                bgcolor="#eceff1"
-                sx={{ p: 2, mb: 2, borderRadius: 1, alignItems: "center" }}
-                key={key}
-              >
-                <Typography variant="h5">{value}</Typography>
-                <Chip
-                  label={key.charAt(0).toUpperCase() + key.slice(1) + " Tables"}
-                  size="small"
-                  color={
-                    key === "available"
-                      ? "success"
-                      : key === "occupied"
-                        ? "info"
-                        : key === "reserved"
-                          ? "warning"
-                          : "error"
-                  }
-                />
-              </Box>
-            ))}
-          </Paper>
-        </Grid>
+                    {"Rp. " + new Intl.NumberFormat().format(order.total_price)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Link>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );
