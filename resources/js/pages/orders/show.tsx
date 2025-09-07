@@ -96,7 +96,11 @@ export default function ShowOrder({
           </Paper>
         </Grid>
 
-        <Grid size={12} sx={{ textAlign: "right" }}>
+        <Grid
+          size={12}
+          sx={{ textAlign: "right" }}
+          visibility={order.status === "open" ? "visible" : "hidden"}
+        >
           <Button
             component={Link}
             color="warning"

@@ -10,6 +10,7 @@ import CardContent from "@mui/material/CardContent";
 import { Link } from "@inertiajs/react";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import CardStatus from "@/components/card-status";
 import CardActions from "@mui/material/CardActions";
 
@@ -78,13 +79,13 @@ export default function OrderIndex({
                 </Typography>
                 <Typography
                   variant="h6"
-                  sx={{ textAlign: "right" }}
+                  sx={{ textAlign: "right", mt: 2, mb: 0 }}
                   gutterBottom
                 >
                   {"Rp. " + new Intl.NumberFormat().format(order.total_price)}
                 </Typography>
               </CardContent>
-              <CardActions sx={{ justifyContent: "space-between" }}>
+              <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
                 <Button
                   size="small"
                   component={Link}
@@ -100,9 +101,10 @@ export default function OrderIndex({
                     component={Link}
                     href={"/orders/" + order.id + "/edit"}
                     color="success"
-                    variant="outlined"
+                    variant="contained"
+                    startIcon={<EditIcon />}
                   >
-                    Edit
+                    Edit Order
                   </Button>
                 )}
               </CardActions>
