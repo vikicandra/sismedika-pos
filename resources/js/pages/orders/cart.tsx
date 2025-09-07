@@ -7,10 +7,13 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
 import Chip from "@mui/material/Chip";
+import { useForm } from "@inertiajs/react";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -36,11 +39,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`full-width-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }
@@ -52,6 +51,14 @@ function a11yProps(index: number) {
   };
 }
 
+interface Item {
+  id: number;
+  name: string;
+  price: number;
+  //   quantity: number;
+  //   sub_total: number;
+}
+
 export default function Cart({
   table_id,
   categories,
@@ -61,6 +68,20 @@ export default function Cart({
   categories: ProductCategoryCart[];
   now: string;
 }) {
+  const { data, setData, post, errors, processing } = useForm({
+    table_id,
+    total_price: 0,
+    items: [
+      {
+        id: 0,
+        name: "",
+        quantity: 0,
+        price: 0,
+        sub_total: 0,
+      },
+    ],
+  });
+
   const [value, setValue] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -72,6 +93,80 @@ export default function Cart({
     setSearchQuery(event.target.value);
   };
 
+  const addToOrder = (item: Item) => {
+    const existingItem = data.items.find(
+      (orderItem) => orderItem.id === item.id,
+    );
+    if (existingItem) {
+      setData(
+        "items",
+        data.items.map((orderItem) =>
+          orderItem.id === item.id
+            ? {
+                ...orderItem,
+                quantity: orderItem.quantity + 1,
+                sub_total: orderItem.price * (orderItem.quantity + 1),
+              }
+            : orderItem,
+        ),
+      );
+    } else {
+      setData("items", [
+        ...data.items,
+        {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          sub_total: item.price,
+          quantity: 1,
+        },
+      ]);
+    }
+  };
+
+  const updateQuantity = (id: number, change: number) => {
+    setData(
+      "items",
+      data.items
+        .map((item) => {
+          if (item.id === id) {
+            const newQuantity = item.quantity + change;
+            return newQuantity > 0
+              ? {
+                  ...item,
+                  quantity: newQuantity,
+                  sub_total: item.price * newQuantity,
+                }
+              : item;
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0),
+    );
+  };
+
+  const removeItem = (id: number) => {
+    setData(
+      "items",
+      data.items.filter((item) => item.id !== id),
+    );
+  };
+
+  useEffect(() => {
+    updateTotalPrice();
+  }, [data.items]);
+
+  const updateTotalPrice = () => {
+    setData(
+      "total_price",
+      data.items.reduce(
+        (sum: number, item: { price: number; quantity: number }) =>
+          sum + item.price * item.quantity,
+        0,
+      ),
+    );
+  };
+  //   const total = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   // Filter products based on the search query
   const filteredProducts = (products: ProductCategoryCart["products"]) =>
     products.filter((product) =>
@@ -145,6 +240,7 @@ export default function Cart({
                           bgcolor: "primary.main",
                           ":hover": { bgcolor: "primary.dark" },
                         }}
+                        onClick={() => addToOrder(product)}
                       >
                         <AddIcon
                           sx={{
@@ -166,6 +262,89 @@ export default function Cart({
             <Typography variant="body2">
               {"Table " + table_id + " • " + now}
             </Typography>
+
+            <Box sx={{ mt: 2 }}>
+              {data.items.map(
+                (item) =>
+                  item.id !== 0 && (
+                    <Grid container key={item.id} sx={{ mt: 2 }}>
+                      <Grid size={{ md: 8, xs: 12 }}>
+                        <Typography variant="body1">{item.name}</Typography>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            mt: 1,
+                          }}
+                        >
+                          <IconButton
+                            size="small"
+                            onClick={() => updateQuantity(item.id, -1)}
+                            sx={{ border: "1px solid #e0e0e0" }}
+                          >
+                            <RemoveIcon fontSize="small" />
+                          </IconButton>
+                          <Typography
+                            sx={{ minWidth: 20, textAlign: "center" }}
+                          >
+                            {item.quantity}
+                          </Typography>
+                          <IconButton
+                            size="small"
+                            onClick={() => updateQuantity(item.id, 1)}
+                            sx={{ border: "1px solid #e0e0e0" }}
+                          >
+                            <AddIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => removeItem(item.id)}
+                            sx={{ color: "text.secondary" }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </Grid>
+                      <Grid
+                        size={{ md: 4, xs: 12 }}
+                        sx={{ textAlign: "right" }}
+                      >
+                        <Typography variant="body1">
+                          {item.sub_total.toLocaleString("id-ID", {
+                            style: "currency",
+                            currency: "IDR",
+                            minimumFractionDigits: 0,
+                          })}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  ),
+              )}
+            </Box>
+
+            <Box sx={{ mt: 2, borderTop: 1, borderColor: "divider" }}>
+              <Grid container sx={{ mt: 2 }}>
+                <Grid size={6}>
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    Total:
+                  </Typography>
+                </Grid>
+                <Grid
+                  size={6}
+                  sx={{ textAlign: "right", verticalAlign: "middle" }}
+                >
+                  <Typography variant="h6">
+                    {data.total_price.toLocaleString("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      minimumFractionDigits: 0,
+                    })}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
           </Paper>
         </Grid>
       </Grid>

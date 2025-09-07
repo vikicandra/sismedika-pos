@@ -36,6 +36,10 @@ class OrderController extends Controller
 
     public function cart($id)
     {
+        $table = Table::find($id);
+        if ($table->status != 'available') {
+            return to_route('orders.create')->with('message', 'Table is not available');
+        }
         $categories = ProductCategory::with('products')->get();
         $now        = Carbon::now()->format('F j, Y');
         return Inertia::render('orders/cart', [
