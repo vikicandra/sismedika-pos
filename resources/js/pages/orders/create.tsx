@@ -2,12 +2,11 @@ import { TableStatus } from "@/enums/tableStatus";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem, Table } from "@/types";
 import Paper from "@mui/material/Paper";
-import SquareIcon from "@mui/icons-material/Square";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
+import CardStatus from "@/components/card-status";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -34,30 +33,7 @@ export default function OrderCreate({
 }) {
   return (
     <Box sx={{ flexGrow: 1, px: 2, mt: 2 }}>
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Table Status
-        </Typography>
-        <Stack direction="row" spacing={3}>
-          {statuses.map((status) => (
-            <Box key={status} sx={{ mb: 2 }}>
-              <SquareIcon
-                color={
-                  status === "available"
-                    ? "success"
-                    : status === "occupied"
-                      ? "info"
-                      : status === "reserved"
-                        ? "warning"
-                        : "error"
-                }
-                sx={{ verticalAlign: "middle", mr: 1 }}
-              />
-              {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
-            </Box>
-          ))}
-        </Stack>
-      </Paper>
+      <CardStatus title="Table Status" statuses={statuses} />
 
       <Grid container sx={{ mt: 2 }} spacing={2}>
         <Grid size={{ md: 8, xs: 12 }}>

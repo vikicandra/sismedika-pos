@@ -1,10 +1,7 @@
 import { OrderStatus } from "@/enums/orderStatus";
 import AppLayout from "@/layouts/app-layout";
 import { BreadcrumbItem, Order } from "@/types";
-import Paper from "@mui/material/Paper";
-import SquareIcon from "@mui/icons-material/Square";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Chip from "@mui/material/Chip";
@@ -13,6 +10,7 @@ import CardContent from "@mui/material/CardContent";
 import { Link } from "@inertiajs/react";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import CardStatus from "@/components/card-status";
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -36,23 +34,7 @@ export default function OrderIndex({
 }) {
   return (
     <Box sx={{ flexGrow: 1, px: 2, mt: 2 }}>
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          Order Status
-        </Typography>
-        <Stack direction="row" spacing={3}>
-          {statuses.map((status) => (
-            <Box key={status} sx={{ mb: 2 }}>
-              <SquareIcon
-                color={statusColors[status]}
-                sx={{ verticalAlign: "middle", mr: 1 }}
-              />
-              {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
-            </Box>
-          ))}
-        </Stack>
-      </Paper>
-
+      <CardStatus title="Order Status" statuses={statuses} />
       <Grid container sx={{ mt: 3 }}>
         <Grid size={{ md: 6 }}>
           <Button
@@ -67,7 +49,6 @@ export default function OrderIndex({
         </Grid>
         <Grid size={{ md: 6 }}></Grid>
       </Grid>
-
       <Grid container spacing={2} sx={{ mt: 2 }}>
         {orders.map((order) => (
           <Grid size={{ md: 3 }} key={order.id}>
